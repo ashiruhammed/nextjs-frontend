@@ -33,6 +33,10 @@ import NotificationBingIcon from '../../components/icons/notification-bing';
 import PeopleIcon from '../../components/icons/people';
 import StickyNoteIcon from '../../components/icons/stickynote';
 import TaskSquareIcon from '../../components/icons/tasksquare';
+import PentagonIcon from '../../components/icons/pentagon';
+import SettingsIcon from '../../components/icons/settings';
+import BcxIcon from '../../components/icons/bcx';
+import ERedIcon from '../../components/icons/ered';
 
 type NavSection = {
   title?: string;
@@ -215,57 +219,136 @@ export default function DashboardLayout({
           <HStack spacing='2' mx='4'>
             <IconButton
               aria-label='Service 1'
-              icon={<Box w='6' h='6' bg='orange.400' borderRadius='md' />}
+              icon={<PentagonIcon />}
               variant='ghost'
-              size='sm'
+              padding={'3'}
+              borderRadius={'md'}
+              // size='sm'
+              borderWidth={'1px'}
+              height={'46px'}
+              width={'46px'}
             />
             <IconButton
               aria-label='Service 2'
-              icon={<Box w='6' h='6' bg='teal.400' borderRadius='md' />}
+              icon={<SettingsIcon />}
               variant='ghost'
+              padding={'3'}
               size='sm'
+              borderWidth={'1px'}
+              height={'46px'}
+              width={'46px'}
             />
             <IconButton
               aria-label='Service 3'
-              icon={<Box w='6' h='6' bg='blue.400' borderRadius='md' />}
+              icon={<BcxIcon />}
               variant='ghost'
+              height={'46px'}
+              width={'46px'}
               size='sm'
+              borderWidth={'1px'}
             />
             <IconButton
               aria-label='Service 4'
-              icon={<Box w='6' h='6' bg='red.400' borderRadius='md' />}
+              icon={<ERedIcon />}
               variant='ghost'
               size='sm'
+              borderWidth={'1px'}
+              height={'46px'}
+              width={'46px'}
+              padding={'3'}
             />
-            <Badge colorScheme='purple' borderRadius='md' px='3' py='1'>
+          </HStack>
+          <HStack
+            height={'46px'}
+            backgroundColor={'#F7F7F7'}
+            borderWidth={'1px'}
+            borderRadius={'lg'}
+            padding={'4px'}
+            borderColor={'#EEF1F9'}>
+            <Badge
+              backgroundColor={'#41245F'}
+              color={'white'}
+              height={'full'}
+              display={'flex'}
+              alignItems={'center'}
+              borderRadius='md'
+              px='3'
+              py='1'>
               Melding maken
             </Badge>
             <IconButton
               aria-label='VIM'
-              icon={<Box w='6' h='6' bg='teal.500' borderRadius='md' />}
+              icon={
+                <Box
+                  height={'full'}
+                  display={'flex'}
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                  width={'46px'}
+                  bg='teal.500'
+                  color={'white'}
+                  borderRadius='md'>
+                  VIM
+                </Box>
+              }
               variant='ghost'
               size='sm'
             />
             <IconButton
               aria-label='LMS'
-              icon={<Box w='6' h='6' bg='teal.400' borderRadius='md' />}
+              icon={
+                <Box
+                  height={'full'}
+                  display={'flex'}
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                  width={'46px'}
+                  bg='teal.500'
+                  color={'white'}
+                  borderRadius='md'>
+                  VIM
+                </Box>
+              }
               variant='ghost'
               size='sm'
             />
             <IconButton
               aria-label='BHV'
-              icon={<Box w='6' h='6' bg='teal.400' borderRadius='md' />}
+              icon={
+                <Box
+                  height={'full'}
+                  display={'flex'}
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                  width={'46px'}
+                  bg='teal.500'
+                  color={'white'}
+                  borderRadius='md'>
+                  VIM
+                </Box>
+              }
               variant='ghost'
               size='sm'
             />
             <IconButton
               aria-label='DataLek'
-              icon={<Box w='6' h='6' bg='teal.400' borderRadius='md' />}
+              icon={
+                <Box
+                  height={'full'}
+                  display={'flex'}
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                  width={'46px'}
+                  bg='teal.500'
+                  color={'white'}
+                  borderRadius='md'>
+                  VIM
+                </Box>
+              }
               variant='ghost'
               size='sm'
             />
           </HStack>
-
           {/* User Section */}
           <HStack spacing='4'>
             <IconButton
