@@ -25,7 +25,7 @@ import { Column, Task } from '../types/task';
 
 export default function Home() {
   const { tasks, addTask, saveTasks } = useTaskPersistence();
-  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
+  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('list');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<
     'all' | 'todo' | 'inProgress' | 'complete'
