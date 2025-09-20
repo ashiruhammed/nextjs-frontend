@@ -7,7 +7,11 @@ import {
   TickSquare,
 } from 'iconsax-reactjs';
 
-export const TaskHeader = () => {
+interface TaskHeaderProps {
+  onAddTask: () => void;
+}
+
+export const TaskHeader = ({ onAddTask }: TaskHeaderProps) => {
   return (
     <Flex justify='space-between' align='center'>
       <Heading size='lg' color='gray.700'>
@@ -43,7 +47,11 @@ export const TaskHeader = () => {
           leftIcon={<ExportCurve size='16' />}>
           Export xlsx
         </Button>
-        <Button size='sm' colorScheme='teal' leftIcon={<AddCircle size='16' />}>
+        <Button
+          size='sm'
+          colorScheme='teal'
+          leftIcon={<AddCircle size='16' />}
+          onClick={onAddTask}>
           Add task
         </Button>
       </HStack>

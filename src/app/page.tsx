@@ -1,6 +1,11 @@
 'use client';
 
-import { Box, useColorModeValue, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  useColorModeValue,
+  VStack,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { DragEndEvent } from '@dnd-kit/core';
 import { Status, TaskSquare, TickCircle } from 'iconsax-reactjs';
 import { useMemo, useState } from 'react';
@@ -8,6 +13,7 @@ import { TaskHeader } from '../../components/task/TaskHeader';
 import { SearchBar } from '../../components/task/SearchBar';
 import { KanbanView } from '../../components/task/KanbanView';
 import { ListView } from '../../components/task/ListView';
+import { CreateTaskModal } from '../../components/task/CreateTaskModal';
 import { Task, Column } from '../types/task';
 import { initialTasks } from '../data/mockData';
 
@@ -18,6 +24,7 @@ export default function Home() {
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<
     'all' | 'todo' | 'inProgress' | 'complete'
   >('todo');
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const bg = useColorModeValue('gray.50', 'gray.900');
 
@@ -87,10 +94,18 @@ export default function Home() {
     );
   };
 
+  const handleCreateTask = (newTask: Omit<Task, 'id'>) => {
+    const taskWithId: Task = {
+      ...newTask,
+      id: (tasks.length + 1).toString(),
+    };
+    setTasks((prevTasks) => [...prevTasks, taskWithId]);
+  };
+
   return (
     <Box bg={bg} minH='100vh' p='6' bgColor={'white'} borderRadius={8}>
       <VStack spacing='10px' align='stretch'>
-        <TaskHeader />
+        <TaskHeader onAddTask={onOpen} />
         <SearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -109,6 +124,11 @@ export default function Home() {
           />
         )}
       </VStack>
+      <CreateTaskModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onCreateTask={handleCreateTask}
+      />
     </Box>
   );
 }

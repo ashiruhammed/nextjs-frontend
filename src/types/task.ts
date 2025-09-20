@@ -6,6 +6,7 @@ export interface Task {
   assignees: string[];
   priority: 'Low' | 'Medium' | 'Important' | 'Urgent';
   status: 'todo' | 'inProgress' | 'complete';
+  description?: string;
 }
 
 export interface Column {
