@@ -69,6 +69,7 @@ interface Column {
   title: string;
   tasks: Task[];
   color: string;
+  icon: React.ReactNode;
 }
 
 // Sample data
@@ -146,7 +147,6 @@ export default function Home() {
   >('todo');
 
   const bg = useColorModeValue('gray.50', 'gray.900');
-  const cardBg = useColorModeValue('white', 'gray.800');
 
   // Group tasks by status
   const columns: Column[] = useMemo(
@@ -155,19 +155,22 @@ export default function Home() {
         id: 'todo',
         title: 'To Do',
         tasks: tasks.filter((task) => task.status === 'todo'),
-        color: 'purple',
+        color: '#F9F3FF',
+        icon: <TaskSquare variant='Bold' size={20} color={'#CFB7E8'} />,
       },
       {
         id: 'inProgress',
         title: 'In Progress',
         tasks: tasks.filter((task) => task.status === 'inProgress'),
-        color: 'orange',
+        color: '#FBF4E4',
+        icon: <Status variant='Bold' size={20} color={'#F6BE38'} />,
       },
       {
         id: 'complete',
         title: 'Complete',
         tasks: tasks.filter((task) => task.status === 'complete'),
-        color: 'teal',
+        color: '#E9F5F7',
+        icon: <TickCircle variant='Bold' size={20} color={'#75C5C1'} />,
       },
     ],
     [tasks]
@@ -378,27 +381,31 @@ export default function Home() {
                   key={column.id}
                   items={column.tasks.map((task) => task.id)}
                   strategy={verticalListSortingStrategy}>
-                  <Box flex='1' minW='300px'>
+                  <Box flex='1' minW='300px' borderRadius={6}>
                     <Flex
                       justify='space-between'
                       align='center'
-                      mb='4'
-                      p='3'
-                      bg={cardBg}
-                      borderRadius='md'
-                      border='1px'
-                      borderColor='gray.200'>
+                      marginBottom={'5px'}
+                      paddingTop={'5px'}
+                      paddingBottom={'10px'}
+                      paddingInline={'5px'}
+                      bgColor={column.color}
+                      borderRadius='md'>
                       <HStack>
-                        <Box
-                          w='8px'
-                          h='8px'
-                          borderRadius='full'
-                          bg={`${column.color}.400`}
-                        />
-                        <Text fontWeight='medium' fontSize='sm'>
-                          {column.title}
-                        </Text>
-                        <Badge variant='subtle' colorScheme={column.color}>
+                        <HStack
+                          bgColor={'white'}
+                          padding={'5px'}
+                          borderRadius={6}>
+                          {column.icon}
+                          <Text fontWeight='medium' fontSize='sm'>
+                            {column.title}
+                          </Text>
+                        </HStack>
+                        <Badge
+                          padding={'5px'}
+                          width={'30px'}
+                          bgColor={'white'}
+                          textAlign={'center'}>
                           {column.tasks.length}
                         </Badge>
                       </HStack>
