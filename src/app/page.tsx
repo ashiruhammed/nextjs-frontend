@@ -1,53 +1,57 @@
 'use client';
 
 import {
+  Avatar,
+  AvatarGroup,
+  Badge,
   Box,
   Button,
   Flex,
   Heading,
   HStack,
   IconButton,
-  VStack,
-  Text,
-  Avatar,
-  Badge,
   Input,
   InputGroup,
   InputLeftElement,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  useColorModeValue,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  AvatarGroup,
+  MenuList,
   Select,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+  useColorModeValue,
+  VStack,
 } from '@chakra-ui/react';
-import { useState, useMemo } from 'react';
-import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core';
 import {
   SortableContext,
+  useSortable,
   verticalListSortingStrategy,
-  arrayMove,
 } from '@dnd-kit/sortable';
-import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { view } from 'framer-motion/client';
 import {
-  SearchNormal1,
-  Calendar1,
-  ArrowDown2,
   Add,
-  TableDocument,
+  AddCircle,
+  Calendar1,
+  CalendarEdit,
   Element4,
-  More,
-  ExportSquare,
+  ExportCurve,
   Filter,
+  More,
+  RowHorizontal,
+  RowVertical,
+  SearchNormal1,
+  TableDocument,
+  TickSquare,
 } from 'iconsax-reactjs';
+import { useMemo, useState } from 'react';
 
 // Types
 interface Task {
@@ -137,6 +141,9 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<
+    'all' | 'todo' | 'inProgress' | 'complete'
+  >('all');
 
   const bg = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
@@ -166,14 +173,20 @@ export default function Home() {
     [tasks]
   );
 
-  // Filter tasks based on search
-  const filteredTasks = useMemo(
-    () =>
-      tasks.filter((task) =>
-        task.title.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    [tasks, searchTerm]
-  );
+  // Filter tasks based on search and status
+  const filteredTasks = useMemo(() => {
+    let filtered = tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (selectedStatusFilter !== 'all') {
+      filtered = filtered.filter(
+        (task) => task.status === selectedStatusFilter
+      );
+    }
+
+    return filtered;
+  }, [tasks, searchTerm, selectedStatusFilter]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -257,28 +270,57 @@ export default function Home() {
   };
 
   return (
-    <Box bg={bg} minH='100vh' p='6'>
-      <VStack spacing='6' align='stretch'>
-        {/* Header */}
+    <Box bg={bg} minH='100vh' p='6' bgColor={'white'} borderRadius={8}>
+      <VStack spacing='10px' align='stretch'>
         <Flex justify='space-between' align='center'>
           <Heading size='lg' color='gray.700'>
             Afdeling Kwaliteit
           </Heading>
           <HStack spacing='3'>
+            <IconButton
+              aria-label='Select all'
+              icon={<TickSquare size='20' />}
+              variant={'outline'}
+              size='sm'
+              bgColor={'#F7F7F7'}
+            />
+            <IconButton
+              aria-label='Filter'
+              icon={<Filter size='20' />}
+              variant='outline'
+              bgColor={'#F7F7F7'}
+              size='sm'
+            />
+            <IconButton
+              aria-label='Calendar'
+              icon={<CalendarEdit size='20' />}
+              variant='outline'
+              bgColor={'#F7F7F7'}
+              size='sm'
+            />
+
             <Button
               size='sm'
-              colorScheme='purple'
-              leftIcon={<ExportSquare size='16' />}>
+              bgColor={'purple.500'}
+              color={'white'}
+              leftIcon={<ExportCurve size='16' />}>
               Export xlsx
             </Button>
-            <Button size='sm' colorScheme='teal' leftIcon={<Add size='16' />}>
+            <Button
+              size='sm'
+              colorScheme='teal'
+              leftIcon={<AddCircle size='16' />}>
               Add task
             </Button>
           </HStack>
         </Flex>
-
-        {/* Search and View Controls */}
-        <Flex justify='space-between' align='center' gap='4'>
+        <Flex
+          justify='space-between'
+          align='center'
+          padding={'8px'}
+          borderRadius={8}
+          bgColor={'grey.50'}
+          gap='4'>
           <InputGroup maxW='300px'>
             <InputLeftElement>
               <SearchNormal1 size='16' color='#A0AEC0' />
@@ -291,25 +333,41 @@ export default function Home() {
             />
           </InputGroup>
 
-          <HStack spacing='2'>
+          <HStack
+            spacing='2'
+            bgColor={'white'}
+            padding={'6px'}
+            borderRadius={8}>
             <IconButton
+              width={'32px'}
+              height={'28px'}
               aria-label='List view'
-              icon={<TableDocument size='20' />}
+              icon={
+                <RowHorizontal
+                  size='20'
+                  color={viewMode !== 'list' ? '#7988A9' : '#FFF'}
+                />
+              }
+              bgColor={viewMode === 'list' ? 'grey.100' : 'lightGrey.50'}
               variant={viewMode === 'list' ? 'solid' : 'ghost'}
-              colorScheme='teal'
               onClick={() => setViewMode('list')}
             />
             <IconButton
+              width={'32px'}
+              height={'28px'}
               aria-label='Kanban view'
-              icon={<Element4 size='20' />}
+              icon={
+                <RowVertical
+                  size='20'
+                  color={viewMode !== 'kanban' ? '#7988A9' : '#FFF'}
+                />
+              }
+              bgColor={viewMode === 'kanban' ? 'grey.100' : 'lightGrey.50'}
               variant={viewMode === 'kanban' ? 'solid' : 'ghost'}
-              colorScheme='teal'
               onClick={() => setViewMode('kanban')}
             />
           </HStack>
-        </Flex>
-
-        {/* Content Area */}
+        </Flex>{' '}
         {viewMode === 'kanban' ? (
           <DndContext
             collisionDetection={closestCenter}
@@ -368,14 +426,12 @@ export default function Home() {
             </Flex>
           </DndContext>
         ) : (
-          /* List View */
           <Box
             bg='white'
             borderRadius='md'
             overflow='hidden'
             border='1px'
             borderColor='gray.200'>
-            {/* List Header */}
             <Flex
               justify='space-between'
               align='center'
@@ -384,23 +440,73 @@ export default function Home() {
               borderColor='gray.200'
               bg='gray.50'>
               <HStack spacing='6'>
-                {columns.map((column) => (
-                  <HStack key={column.id}>
-                    <Box
-                      w='8px'
-                      h='8px'
-                      borderRadius='full'
-                      bg={`${column.color}.400`}
-                    />
-                    <Text fontSize='sm' fontWeight='medium'>
-                      {column.title}
-                    </Text>
-                    <Badge variant='subtle' colorScheme={column.color}>
-                      ({column.tasks.length})
-                    </Badge>
-                  </HStack>
-                ))}
+                <Button
+                  variant={selectedStatusFilter === 'all' ? 'solid' : 'ghost'}
+                  colorScheme='purple'
+                  size='sm'
+                  leftIcon={
+                    <Box w='8px' h='8px' borderRadius='full' bg='purple.400' />
+                  }
+                  onClick={() => setSelectedStatusFilter('all')}>
+                  All
+                  <Badge ml='2' variant='subtle' colorScheme='purple'>
+                    {tasks.length}
+                  </Badge>
+                </Button>
+
+                <Button
+                  variant={selectedStatusFilter === 'todo' ? 'solid' : 'ghost'}
+                  colorScheme='purple'
+                  size='sm'
+                  leftIcon={
+                    <Box w='8px' h='8px' borderRadius='full' bg='purple.400' />
+                  }
+                  onClick={() => setSelectedStatusFilter('todo')}>
+                  To Do
+                  <Badge ml='2' variant='subtle' colorScheme='purple'>
+                    ({columns.find((c) => c.id === 'todo')?.tasks.length || 0})
+                  </Badge>
+                </Button>
+
+                <Button
+                  variant={
+                    selectedStatusFilter === 'inProgress' ? 'solid' : 'ghost'
+                  }
+                  colorScheme='orange'
+                  size='sm'
+                  leftIcon={
+                    <Box w='8px' h='8px' borderRadius='full' bg='orange.400' />
+                  }
+                  onClick={() => setSelectedStatusFilter('inProgress')}>
+                  In Progress
+                  <Badge ml='2' variant='subtle' colorScheme='orange'>
+                    (
+                    {columns.find((c) => c.id === 'inProgress')?.tasks.length ||
+                      0}
+                    )
+                  </Badge>
+                </Button>
+
+                <Button
+                  variant={
+                    selectedStatusFilter === 'complete' ? 'solid' : 'ghost'
+                  }
+                  colorScheme='teal'
+                  size='sm'
+                  leftIcon={
+                    <Box w='8px' h='8px' borderRadius='full' bg='teal.400' />
+                  }
+                  onClick={() => setSelectedStatusFilter('complete')}>
+                  Complete
+                  <Badge ml='2' variant='subtle' colorScheme='teal'>
+                    (
+                    {columns.find((c) => c.id === 'complete')?.tasks.length ||
+                      0}
+                    )
+                  </Badge>
+                </Button>
               </HStack>
+
               <Select size='sm' maxW='120px' defaultValue='10'>
                 <option value='10'>10</option>
                 <option value='25'>25</option>
@@ -408,7 +514,6 @@ export default function Home() {
               </Select>
             </Flex>
 
-            {/* Table */}
             <Table variant='simple'>
               <Thead>
                 <Tr>
@@ -458,7 +563,6 @@ export default function Home() {
               </Tbody>
             </Table>
 
-            {/* Pagination */}
             <Flex
               justify='space-between'
               align='center'
