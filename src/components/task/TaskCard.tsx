@@ -1,3 +1,5 @@
+import { priorityColors } from '@/data/mockData';
+import { Task } from '@/types/task';
 import {
   Avatar,
   AvatarGroup,
@@ -13,8 +15,6 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Calendar, Flag, ProfileCircle } from 'iconsax-reactjs';
 import { MdDragIndicator } from 'react-icons/md';
-import { priorityColors } from '../../src/data/mockData';
-import { Task } from '../../src/types/task';
 
 interface TaskCardProps {
   task: Task;

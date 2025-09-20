@@ -20,8 +20,8 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { Flag, More, Status, TaskSquare, TickCircle } from 'iconsax-reactjs';
-import { Column, Task } from '../../src/types/task';
-import { priorityColors } from '../../src/data/mockData';
+import { Column, Task } from '@/types/task';
+import { priorityColors } from '@/data/mockData';
 
 interface ListViewProps {
   filteredTasks: Task[];

@@ -13,13 +13,13 @@ import {
 import { DragEndEvent } from '@dnd-kit/core';
 import { Status, TaskSquare, TickCircle } from 'iconsax-reactjs';
 import { useMemo, useState } from 'react';
-import { SearchBar } from '../../components/task/SearchBar';
-import { TaskHeader } from '../../components/task/TaskHeader';
+import { SearchBar } from '@/components/task/SearchBar';
+import { TaskHeader } from '@/components/task/TaskHeader';
 
-import { ListView } from '../../components/task/ListView';
+import { ListView } from '@/components/task/ListView';
 
-import { CreateTaskModal } from '../../components/task/CreateTaskModal';
-import { KanbanView } from '../../components/task/KanbanView';
+import { CreateTaskModal } from '@/components/task/CreateTaskModal';
+import { KanbanView } from '@/components/task/KanbanView';
 import { useTaskPersistence } from '../hooks/useTaskPersistence';
 import { Column, Task } from '../types/task';
 

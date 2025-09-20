@@ -10,7 +10,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { Add } from 'iconsax-reactjs';
-import { Column } from '../../src/types/task';
+import { Column } from '@/types/task';
 import { TaskCard } from './TaskCard';
 
 interface KanbanViewProps {

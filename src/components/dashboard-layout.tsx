@@ -1,4 +1,20 @@
 'use client';
+import BcxIcon from '@/components/icons/bcx';
+import CallIcon from '@/components/icons/call';
+import CategoryIcon from '@/components/icons/category';
+import ERedIcon from '@/components/icons/ered';
+import Folder2Icon from '@/components/icons/folder-2';
+import LogoIcon from '@/components/icons/logo';
+import MenuBoardIcon from '@/components/icons/menu-board';
+import MessageEditIcon from '@/components/icons/message-edit';
+import NewsPaperIcon from '@/components/icons/newspaper';
+import NoteIcon from '@/components/icons/note';
+import NotificationBingIcon from '@/components/icons/notification-bing';
+import PentagonIcon from '@/components/icons/pentagon';
+import PeopleIcon from '@/components/icons/people';
+import SettingsIcon from '@/components/icons/settings';
+import StickyNoteIcon from '@/components/icons/stickynote';
+import TaskSquareIcon from '@/components/icons/tasksquare';
 import {
   Accordion,
   AccordionButton,
@@ -25,7 +41,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { ArrowDown, ArrowDown2 } from 'iconsax-reactjs';
+import { ArrowDown2 } from 'iconsax-reactjs';
 import React, { useState } from 'react';
 import {
   FiBell,
@@ -34,22 +50,6 @@ import {
   FiMenu,
   FiSearch,
 } from 'react-icons/fi';
-import BcxIcon from '../../components/icons/bcx';
-import CallIcon from '../../components/icons/call';
-import CategoryIcon from '../../components/icons/category';
-import ERedIcon from '../../components/icons/ered';
-import Folder2Icon from '../../components/icons/folder-2';
-import LogoIcon from '../../components/icons/logo';
-import MenuBoardIcon from '../../components/icons/menu-board';
-import MessageEditIcon from '../../components/icons/message-edit';
-import NewsPaperIcon from '../../components/icons/newspaper';
-import NoteIcon from '../../components/icons/note';
-import NotificationBingIcon from '../../components/icons/notification-bing';
-import PentagonIcon from '../../components/icons/pentagon';
-import PeopleIcon from '../../components/icons/people';
-import SettingsIcon from '../../components/icons/settings';
-import StickyNoteIcon from '../../components/icons/stickynote';
-import TaskSquareIcon from '../../components/icons/tasksquare';
 
 type NavSection = {
   title?: string;

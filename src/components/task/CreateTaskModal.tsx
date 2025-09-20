@@ -37,12 +37,9 @@ import {
   TickCircle,
 } from 'iconsax-reactjs';
 import { Controller, useForm } from 'react-hook-form';
-import { mockUsers } from '../../src/data/mockUsers';
-import {
-  CreateTaskFormData,
-  createTaskSchema,
-} from '../../src/schemas/taskSchema';
-import { Task } from '../../src/types/task';
+import { mockUsers } from '@/data/mockUsers';
+import { CreateTaskFormData, createTaskSchema } from '@/schemas/taskSchema';
+import { Task } from '@/types/task';
 import { DatePicker } from '../ui/DatePicker';
 
 interface CreateTaskModalProps {
