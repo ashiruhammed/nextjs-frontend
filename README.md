@@ -114,6 +114,7 @@ nextjs-frontend/
 │   │   │   ├── KanbanView.tsx    # Kanban board layout
 │   │   │   ├── ListView.tsx      # List table view
 │   │   │   └── CreateTaskModal.tsx # Task creation modal
+│   │   │   └── icons             # Custom icon components
 │   │   └── ui/
 │   │       └── DatePicker.tsx    # Custom date picker
 │   ├── types/
@@ -125,8 +126,6 @@ nextjs-frontend/
 │   │   └── taskSchema.ts         # Zod validation schemas
 │   └── hooks/
 │       └── useTaskPersistence.ts # localStorage persistence
-├── components/
-│   └── icons/                    # Custom icon components
 ├── public/                       # Static assets
 └── README.md
 ```
