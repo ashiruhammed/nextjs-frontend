@@ -1,98 +1,494 @@
-import Image from 'next/image';
+'use client';
+
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  HStack,
+  IconButton,
+  VStack,
+  Text,
+  Avatar,
+  Badge,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  useColorModeValue,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  AvatarGroup,
+  Select,
+} from '@chakra-ui/react';
+import { useState, useMemo } from 'react';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import {
+  SearchNormal1,
+  Calendar1,
+  ArrowDown2,
+  Add,
+  TableDocument,
+  Element4,
+  More,
+  ExportSquare,
+  Filter,
+} from 'iconsax-reactjs';
+
+// Types
+interface Task {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string;
+  assignees: string[];
+  priority: 'Low' | 'Medium' | 'Important' | 'Urgent';
+  status: 'todo' | 'inProgress' | 'complete';
+}
+
+interface Column {
+  id: string;
+  title: string;
+  tasks: Task[];
+  color: string;
+}
+
+// Sample data
+const initialTasks: Task[] = [
+  {
+    id: '1',
+    title: 'MKV Intranet V2',
+    startDate: '04/06/2024',
+    endDate: '16/06/2014',
+    assignees: ['John', 'Sarah', 'Mike'],
+    priority: 'Medium',
+    status: 'todo',
+  },
+  {
+    id: '2',
+    title: 'Design System',
+    startDate: '23/06/2024',
+    endDate: '24/06/2024',
+    assignees: ['John', 'Sarah'],
+    priority: 'Important',
+    status: 'todo',
+  },
+  {
+    id: '3',
+    title: 'Medical Appointment',
+    startDate: '16/06/2024',
+    endDate: '18/06/2024',
+    assignees: ['John', 'Sarah'],
+    priority: 'Urgent',
+    status: 'todo',
+  },
+  {
+    id: '4',
+    title: 'Testing Data',
+    startDate: '23/06/2024',
+    endDate: '24/06/2024',
+    assignees: ['John', 'Sarah'],
+    priority: 'Urgent',
+    status: 'inProgress',
+  },
+  {
+    id: '5',
+    title: 'Patient Request',
+    startDate: '16/06/2024',
+    endDate: '18/06/2024',
+    assignees: ['John', 'Sarah'],
+    priority: 'Urgent',
+    status: 'inProgress',
+  },
+  {
+    id: '6',
+    title: 'Patient Meetup',
+    startDate: '23/06/2024',
+    endDate: '24/06/2024',
+    assignees: ['Mike'],
+    priority: 'Low',
+    status: 'complete',
+  },
+];
+
+// Priority colors
+const priorityColors = {
+  Low: 'gray',
+  Medium: 'teal',
+  Important: 'yellow',
+  Urgent: 'red',
+};
 
 export default function Home() {
-  return (
-    <div className='font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20'>
-      <main className='flex flex-col gap-[32px] row-start-2 items-center sm:items-start'>
-        <Image
-          className='dark:invert'
-          src='/next.svg'
-          alt='Next.js logo'
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className='font-mono list-inside list-decimal text-sm/6 text-center sm:text-left'>
-          <li className='mb-2 tracking-[-.01em]'>
-            Get started by editing{' '}
-            <code className='bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded'>
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className='tracking-[-.01em]'>
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
+  const [searchTerm, setSearchTerm] = useState('');
 
-        <div className='flex gap-4 items-center flex-col sm:flex-row'>
-          <a
-            className='rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto'
-            href='https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'>
-            <Image
-              className='dark:invert'
-              src='/vercel.svg'
-              alt='Vercel logomark'
-              width={20}
-              height={20}
+  const bg = useColorModeValue('gray.50', 'gray.900');
+  const cardBg = useColorModeValue('white', 'gray.800');
+
+  // Group tasks by status
+  const columns: Column[] = useMemo(
+    () => [
+      {
+        id: 'todo',
+        title: 'To Do',
+        tasks: tasks.filter((task) => task.status === 'todo'),
+        color: 'purple',
+      },
+      {
+        id: 'inProgress',
+        title: 'In Progress',
+        tasks: tasks.filter((task) => task.status === 'inProgress'),
+        color: 'orange',
+      },
+      {
+        id: 'complete',
+        title: 'Complete',
+        tasks: tasks.filter((task) => task.status === 'complete'),
+        color: 'teal',
+      },
+    ],
+    [tasks]
+  );
+
+  // Filter tasks based on search
+  const filteredTasks = useMemo(
+    () =>
+      tasks.filter((task) =>
+        task.title.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [tasks, searchTerm]
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    // Find the task being moved
+    const activeTask = tasks.find((task) => task.id === activeId);
+    if (!activeTask) return;
+
+    // Determine new status based on drop target
+    let newStatus: Task['status'] = activeTask.status;
+    if (overId === 'todo' || overId.startsWith('todo-')) newStatus = 'todo';
+    else if (overId === 'inProgress' || overId.startsWith('inProgress-'))
+      newStatus = 'inProgress';
+    else if (overId === 'complete' || overId.startsWith('complete-'))
+      newStatus = 'complete';
+
+    // Update task status
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === activeId ? { ...task, status: newStatus } : task
+      )
+    );
+  };
+
+  // Task Card Component (for Kanban view)
+  const TaskCard = ({ task }: { task: Task }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({
+        id: task.id,
+      });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <Box
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        bg='white'
+        p='4'
+        borderRadius='md'
+        border='1px'
+        borderColor='gray.200'
+        cursor='grab'
+        _active={{ cursor: 'grabbing' }}
+        shadow='sm'
+        _hover={{ shadow: 'md' }}
+        mb='3'>
+        <VStack align='stretch' spacing='3'>
+          <Text fontWeight='medium' fontSize='sm'>
+            {task.title}
+          </Text>
+          <Flex align='center' gap='2'>
+            <Calendar1 size='14' color='#666' />
+            <Text fontSize='xs' color='gray.600'>
+              {task.startDate} - {task.endDate}
+            </Text>
+          </Flex>
+          <Flex justify='space-between' align='center'>
+            <AvatarGroup size='xs' max={3}>
+              {task.assignees.map((assignee, idx) => (
+                <Avatar key={idx} name={assignee} size='xs' />
+              ))}
+            </AvatarGroup>
+            <Badge colorScheme={priorityColors[task.priority]} size='sm'>
+              {task.priority}
+            </Badge>
+          </Flex>
+        </VStack>
+      </Box>
+    );
+  };
+
+  return (
+    <Box bg={bg} minH='100vh' p='6'>
+      <VStack spacing='6' align='stretch'>
+        {/* Header */}
+        <Flex justify='space-between' align='center'>
+          <Heading size='lg' color='gray.700'>
+            Afdeling Kwaliteit
+          </Heading>
+          <HStack spacing='3'>
+            <Button
+              size='sm'
+              colorScheme='purple'
+              leftIcon={<ExportSquare size='16' />}>
+              Export xlsx
+            </Button>
+            <Button size='sm' colorScheme='teal' leftIcon={<Add size='16' />}>
+              Add task
+            </Button>
+          </HStack>
+        </Flex>
+
+        {/* Search and View Controls */}
+        <Flex justify='space-between' align='center' gap='4'>
+          <InputGroup maxW='300px'>
+            <InputLeftElement>
+              <SearchNormal1 size='16' color='#A0AEC0' />
+            </InputLeftElement>
+            <Input
+              placeholder='Search for To-Do...'
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              bg='white'
             />
-            Deploy now
-          </a>
-          <a
-            className='rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]'
-            href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'>
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className='row-start-3 flex gap-[24px] flex-wrap items-center justify-center'>
-        <a
-          className='flex items-center gap-2 hover:underline hover:underline-offset-4'
-          href='https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'>
-          <Image
-            aria-hidden
-            src='/file.svg'
-            alt='File icon'
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className='flex items-center gap-2 hover:underline hover:underline-offset-4'
-          href='https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'>
-          <Image
-            aria-hidden
-            src='/window.svg'
-            alt='Window icon'
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className='flex items-center gap-2 hover:underline hover:underline-offset-4'
-          href='https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'>
-          <Image
-            aria-hidden
-            src='/globe.svg'
-            alt='Globe icon'
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          </InputGroup>
+
+          <HStack spacing='2'>
+            <IconButton
+              aria-label='List view'
+              icon={<TableDocument size='20' />}
+              variant={viewMode === 'list' ? 'solid' : 'ghost'}
+              colorScheme='teal'
+              onClick={() => setViewMode('list')}
+            />
+            <IconButton
+              aria-label='Kanban view'
+              icon={<Element4 size='20' />}
+              variant={viewMode === 'kanban' ? 'solid' : 'ghost'}
+              colorScheme='teal'
+              onClick={() => setViewMode('kanban')}
+            />
+          </HStack>
+        </Flex>
+
+        {/* Content Area */}
+        {viewMode === 'kanban' ? (
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}>
+            <Flex gap='6' align='flex-start'>
+              {columns.map((column) => (
+                <SortableContext
+                  key={column.id}
+                  items={column.tasks.map((task) => task.id)}
+                  strategy={verticalListSortingStrategy}>
+                  <Box flex='1' minW='300px'>
+                    <Flex
+                      justify='space-between'
+                      align='center'
+                      mb='4'
+                      p='3'
+                      bg={cardBg}
+                      borderRadius='md'
+                      border='1px'
+                      borderColor='gray.200'>
+                      <HStack>
+                        <Box
+                          w='8px'
+                          h='8px'
+                          borderRadius='full'
+                          bg={`${column.color}.400`}
+                        />
+                        <Text fontWeight='medium' fontSize='sm'>
+                          {column.title}
+                        </Text>
+                        <Badge variant='subtle' colorScheme={column.color}>
+                          {column.tasks.length}
+                        </Badge>
+                      </HStack>
+                      <IconButton
+                        aria-label='Add task'
+                        icon={<Add size='16' />}
+                        size='xs'
+                        variant='ghost'
+                      />
+                    </Flex>
+
+                    <Box
+                      id={column.id}
+                      minH='400px'
+                      p='2'
+                      borderRadius='md'
+                      bg='gray.50'>
+                      {column.tasks.map((task) => (
+                        <TaskCard key={task.id} task={task} />
+                      ))}
+                    </Box>
+                  </Box>
+                </SortableContext>
+              ))}
+            </Flex>
+          </DndContext>
+        ) : (
+          /* List View */
+          <Box
+            bg='white'
+            borderRadius='md'
+            overflow='hidden'
+            border='1px'
+            borderColor='gray.200'>
+            {/* List Header */}
+            <Flex
+              justify='space-between'
+              align='center'
+              p='4'
+              borderBottom='1px'
+              borderColor='gray.200'
+              bg='gray.50'>
+              <HStack spacing='6'>
+                {columns.map((column) => (
+                  <HStack key={column.id}>
+                    <Box
+                      w='8px'
+                      h='8px'
+                      borderRadius='full'
+                      bg={`${column.color}.400`}
+                    />
+                    <Text fontSize='sm' fontWeight='medium'>
+                      {column.title}
+                    </Text>
+                    <Badge variant='subtle' colorScheme={column.color}>
+                      ({column.tasks.length})
+                    </Badge>
+                  </HStack>
+                ))}
+              </HStack>
+              <Select size='sm' maxW='120px' defaultValue='10'>
+                <option value='10'>10</option>
+                <option value='25'>25</option>
+                <option value='50'>50</option>
+              </Select>
+            </Flex>
+
+            {/* Table */}
+            <Table variant='simple'>
+              <Thead>
+                <Tr>
+                  <Th>Name</Th>
+                  <Th>Date</Th>
+                  <Th>Assignee</Th>
+                  <Th>Priority</Th>
+                  <Th></Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {filteredTasks.map((task) => (
+                  <Tr key={task.id}>
+                    <Td fontWeight='medium'>{task.title}</Td>
+                    <Td>
+                      {task.startDate} - {task.endDate}
+                    </Td>
+                    <Td>
+                      <AvatarGroup size='sm' max={2}>
+                        {task.assignees.map((assignee, idx) => (
+                          <Avatar key={idx} name={assignee} size='sm' />
+                        ))}
+                      </AvatarGroup>
+                    </Td>
+                    <Td>
+                      <Badge colorScheme={priorityColors[task.priority]}>
+                        {task.priority}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      <Menu>
+                        <MenuButton
+                          as={IconButton}
+                          icon={<More size='16' />}
+                          variant='ghost'
+                          size='sm'
+                        />
+                        <MenuList>
+                          <MenuItem>Edit</MenuItem>
+                          <MenuItem>Delete</MenuItem>
+                          <MenuItem>Duplicate</MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+
+            {/* Pagination */}
+            <Flex
+              justify='space-between'
+              align='center'
+              p='4'
+              borderTop='1px'
+              borderColor='gray.200'>
+              <Text fontSize='sm' color='gray.600'>
+                Rows Per page: 10
+              </Text>
+              <HStack spacing='2'>
+                <Button size='sm' variant='ghost'>
+                  1
+                </Button>
+                <Button size='sm' variant='ghost'>
+                  2
+                </Button>
+                <Button size='sm' variant='ghost'>
+                  3
+                </Button>
+                <Text fontSize='sm' color='gray.600'>
+                  ...
+                </Text>
+                <Button size='sm' variant='ghost'>
+                  100
+                </Button>
+              </HStack>
+            </Flex>
+          </Box>
+        )}
+      </VStack>
+    </Box>
   );
 }
