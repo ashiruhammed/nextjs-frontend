@@ -1,6 +1,9 @@
 import {
+  Avatar,
+  Badge,
   Box,
   Button,
+  Checkbox,
   FormControl,
   FormErrorMessage,
   HStack,
@@ -10,6 +13,10 @@ import {
   ModalBody,
   ModalContent,
   ModalOverlay,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Text,
   Textarea,
   VStack,
@@ -26,11 +33,13 @@ import {
 } from 'iconsax-reactjs';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { mockUsers } from '../../src/data/mockUsers';
 import {
-  createTaskSchema,
   CreateTaskFormData,
+  createTaskSchema,
 } from '../../src/schemas/taskSchema';
 import { Task } from '../../src/types/task';
+import { DatePicker } from '../ui/DatePicker';
 
 interface CreateTaskModalProps {
   isOpen: boolean;
@@ -44,8 +53,6 @@ export const CreateTaskModal = ({
   onCreateTask,
 }: CreateTaskModalProps) => {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showAssigneeInput, setShowAssigneeInput] = useState(false);
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
 
   const {
@@ -62,6 +69,7 @@ export const CreateTaskModal = ({
       status: 'todo',
       startDate: '',
       endDate: '',
+      assignees: [],
       priority: 'Low',
       description: '',
     },
@@ -69,14 +77,14 @@ export const CreateTaskModal = ({
 
   const watchedValues = watch();
 
-  const onSubmit = async (data: CreateTaskFormData) => {
+  const onSubmit = (data: CreateTaskFormData) => {
     try {
       const taskData: Omit<Task, 'id'> = {
         title: data.title,
         status: data.status,
         startDate: data.startDate || new Date().toISOString().split('T')[0],
         endDate: data.endDate || new Date().toISOString().split('T')[0],
-        assignees: data.assignees || [],
+        assignees: data.assignees,
         priority: data.priority,
         description: data.description,
       };
@@ -92,8 +100,6 @@ export const CreateTaskModal = ({
   const resetForm = () => {
     reset();
     setShowStatusDropdown(false);
-    setShowDatePicker(false);
-    setShowAssigneeInput(false);
     setShowPriorityDropdown(false);
   };
 
@@ -235,11 +241,7 @@ export const CreateTaskModal = ({
                   </Box>
                 </HStack>
 
-                <HStack
-                  justify='space-between'
-                  align='center'
-                  cursor='pointer'
-                  onClick={() => setShowDatePicker(!showDatePicker)}>
+                <HStack justify='space-between' align='center'>
                   <HStack spacing='12px'>
                     <Box color='#718096'>
                       <Calendar1 size='20' />
@@ -248,48 +250,36 @@ export const CreateTaskModal = ({
                       Dates
                     </Text>
                   </HStack>
-                  <Text fontSize='14px' color='#A0AEC0'>
-                    {watchedValues.startDate && watchedValues.endDate
-                      ? `${watchedValues.startDate} - ${watchedValues.endDate}`
-                      : '00/00/0000'}
-                  </Text>
+                  <HStack spacing='2'>
+                    <Controller
+                      name='startDate'
+                      control={control}
+                      render={({ field }) => (
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder='Start Date'
+                        />
+                      )}
+                    />
+                    <Text fontSize='14px' color='#A0AEC0'>
+                      -
+                    </Text>
+                    <Controller
+                      name='endDate'
+                      control={control}
+                      render={({ field }) => (
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder='End Date'
+                        />
+                      )}
+                    />
+                  </HStack>
                 </HStack>
 
-                {showDatePicker && (
-                  <HStack spacing='4'>
-                    <FormControl isInvalid={!!errors.startDate}>
-                      <Controller
-                        name='startDate'
-                        control={control}
-                        render={({ field }) => (
-                          <Input {...field} type='date' size='sm' />
-                        )}
-                      />
-                      <FormErrorMessage>
-                        {errors.startDate?.message}
-                      </FormErrorMessage>
-                    </FormControl>
-                    <Text>-</Text>
-                    <FormControl isInvalid={!!errors.endDate}>
-                      <Controller
-                        name='endDate'
-                        control={control}
-                        render={({ field }) => (
-                          <Input {...field} type='date' size='sm' />
-                        )}
-                      />
-                      <FormErrorMessage>
-                        {errors.endDate?.message}
-                      </FormErrorMessage>
-                    </FormControl>
-                  </HStack>
-                )}
-
-                <HStack
-                  justify='space-between'
-                  align='center'
-                  cursor='pointer'
-                  onClick={() => setShowAssigneeInput(!showAssigneeInput)}>
+                <HStack justify='space-between' align='center'>
                   <HStack spacing='12px'>
                     <Box color='#718096'>
                       <People size='20' />
@@ -298,26 +288,62 @@ export const CreateTaskModal = ({
                       Assignees
                     </Text>
                   </HStack>
-                  <Text fontSize='14px' color='#A0AEC0'>
-                    {watchedValues.assignees || 'Select Assignee'}
-                  </Text>
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button
+                        size='sm'
+                        variant='outline'
+                        fontSize='14px'
+                        rightIcon={
+                          watchedValues.assignees.length > 0 ? (
+                            <Badge
+                              colorScheme='blue'
+                              borderRadius='full'
+                              fontSize='xs'>
+                              {watchedValues.assignees.length}
+                            </Badge>
+                          ) : undefined
+                        }>
+                        {watchedValues.assignees.length > 0
+                          ? `${watchedValues.assignees.length} selected`
+                          : 'Select Assignees'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent w='250px'>
+                      <PopoverBody>
+                        <VStack align='stretch' spacing='2'>
+                          {mockUsers.map((user) => (
+                            <HStack key={user} spacing='3'>
+                              <Controller
+                                name='assignees'
+                                control={control}
+                                render={({ field }) => (
+                                  <Checkbox
+                                    isChecked={field.value.includes(user)}
+                                    onChange={(e) => {
+                                      if (e.target.checked) {
+                                        field.onChange([...field.value, user]);
+                                      } else {
+                                        field.onChange(
+                                          field.value.filter(
+                                            (assignee: string) =>
+                                              assignee !== user
+                                          )
+                                        );
+                                      }
+                                    }}
+                                  />
+                                )}
+                              />
+                              <Avatar name={user} size='sm' />
+                              <Text fontSize='14px'>{user}</Text>
+                            </HStack>
+                          ))}
+                        </VStack>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
                 </HStack>
-
-                {showAssigneeInput && (
-                  <FormControl>
-                    <Controller
-                      name='assignees'
-                      control={control}
-                      render={({ field }) => (
-                        <Input
-                          {...field}
-                          placeholder='Enter names separated by commas'
-                          size='sm'
-                        />
-                      )}
-                    />
-                  </FormControl>
-                )}
 
                 <HStack justify='space-between' align='center'>
                   <HStack spacing='12px'>

@@ -8,17 +8,7 @@ export const createTaskSchema = z.object({
   status: z.enum(['todo', 'inProgress', 'complete']),
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
-  assignees: z
-    .string()
-    .optional()
-    .transform((val) =>
-      val
-        ? val
-            .split(',')
-            .map((a) => a.trim())
-            .filter(Boolean)
-        : []
-    ),
+  assignees: z.array(z.string()),
   priority: z.enum(['Low', 'Medium', 'Important', 'Urgent']),
   description: z.string().optional(),
 });
