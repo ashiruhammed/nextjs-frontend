@@ -18,6 +18,11 @@ import {
   useDisclosure,
   VStack,
   Badge,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { FiMenu, FiSearch, FiBell, FiChevronDown } from 'react-icons/fi';
@@ -94,12 +99,42 @@ function NavItem({ label }: { label: string }) {
       fontSize={14}
       color={useColorModeValue('#464B50', 'gray.200')}
       _hover={{
-        bg: useColorModeValue('grey.50', 'gray.700'),
-        color: useColorModeValue('grey.100', 'gray.200'),
+        bg: useColorModeValue('gray.50', 'gray.700'),
+        color: useColorModeValue('gray.800', 'gray.200'),
       }}
       px='8'
-      py='2'>
+      py='2'
+      w='full'>
       {label}
+    </Button>
+  );
+}
+
+function SimpleNavItem({
+  title,
+  icon,
+  collapsed,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  collapsed: boolean;
+}) {
+  return (
+    <Button
+      variant='ghost'
+      justifyContent='flex-start'
+      fontWeight='semibold'
+      fontSize={14}
+      color='#464B50'
+      _hover={{
+        bg: useColorModeValue('gray.50', 'gray.700'),
+      }}
+      leftIcon={!collapsed && React.isValidElement(icon) ? icon : undefined}
+      px={collapsed ? '2' : '4'}
+      py='3'
+      w='full'
+      h='auto'>
+      {collapsed ? icon : title}
     </Button>
   );
 }
@@ -124,7 +159,7 @@ export default function DashboardLayout({
         borderColor={borderColor}
         h='100%'
         overflow='auto'>
-        <HStack justify='space-between' mb='16'>
+        <HStack justify='space-between' mb='8'>
           <LogoIcon />
           <IconButton
             aria-label={collapsed ? 'expand' : 'collapse'}
@@ -134,33 +169,64 @@ export default function DashboardLayout({
             display={{ base: 'none', md: 'inline-flex' }}
           />
         </HStack>
-        <VStack align='stretch' spacing='3'>
-          {nav.map((section, idx) => (
-            <VStack key={idx} align='stretch' spacing={5}>
-              {section.title && !collapsed && (
-                <div className='flex items-center gap-2'>
-                  {section.icon}
-                  <Text
-                    fontSize='sm'
-                    color='#464B50'
-                    fontWeight={'semibold'}
-                    px='2'
-                    py='1'>
-                    {section.title}
-                  </Text>
-                </div>
-              )}
-              <VStack spacing={5} align={'stretch'}>
-                {section?.items?.map((it) => (
-                  <NavItem key={it.label} label={collapsed ? '' : it.label} />
-                ))}
-              </VStack>
-            </VStack>
-          ))}
+
+        <VStack align='stretch' spacing='2'>
+          {nav.map((section, idx) => {
+            if (section.items && section.items.length > 0) {
+              return (
+                <Accordion key={idx} allowToggle>
+                  <AccordionItem border='none'>
+                    <AccordionButton
+                      p='3'
+                      borderRadius='md'
+                      _hover={{
+                        bg: 'gray.50',
+                      }}
+                      _expanded={{
+                        bg: 'gray.100',
+                      }}>
+                      <HStack flex='1' spacing='3'>
+                        {section.icon}
+                        {!collapsed && (
+                          <Text
+                            fontSize='sm'
+                            color='#464B50'
+                            fontWeight='semibold'
+                            textAlign='left'>
+                            {section.title}
+                          </Text>
+                        )}
+                      </HStack>
+                      {!collapsed && <AccordionIcon />}
+                    </AccordionButton>
+                    {!collapsed && (
+                      <AccordionPanel pb='2' pt='1' px='0'>
+                        <VStack spacing='1' align='stretch'>
+                          {section.items.map((item) => (
+                            <NavItem key={item.label} label={item.label} />
+                          ))}
+                        </VStack>
+                      </AccordionPanel>
+                    )}
+                  </AccordionItem>
+                </Accordion>
+              );
+            }
+
+            return (
+              <SimpleNavItem
+                key={idx}
+                title={section.title!}
+                icon={section.icon}
+                collapsed={collapsed}
+              />
+            );
+          })}
         </VStack>
       </Box>
     );
   }
+
   return (
     <Flex h='100vh' bg={useColorModeValue('gray.50', 'gray.900')}>
       {/* Desktop sidebar */}
@@ -183,6 +249,7 @@ export default function DashboardLayout({
           justify='space-between'
           align='center'
           p='4'
+          gap={'30px'}
           bg={useColorModeValue('white', 'gray.800')}
           borderBottom='1px'
           borderColor='gray.200'
@@ -223,10 +290,9 @@ export default function DashboardLayout({
               variant='ghost'
               padding={'3'}
               borderRadius={'md'}
-              // size='sm'
               borderWidth={'1px'}
               height={'46px'}
-              width={'46px'}
+              minWidth={'46px'}
             />
             <IconButton
               aria-label='Service 2'
@@ -236,14 +302,14 @@ export default function DashboardLayout({
               size='sm'
               borderWidth={'1px'}
               height={'46px'}
-              width={'46px'}
+              minWidth={'46px'}
             />
             <IconButton
               aria-label='Service 3'
               icon={<BcxIcon />}
               variant='ghost'
               height={'46px'}
-              width={'46px'}
+              minWidth={'46px'}
               size='sm'
               borderWidth={'1px'}
             />
@@ -254,7 +320,7 @@ export default function DashboardLayout({
               size='sm'
               borderWidth={'1px'}
               height={'46px'}
-              width={'46px'}
+              minWidth={'46px'}
               padding={'3'}
             />
           </HStack>
@@ -284,7 +350,7 @@ export default function DashboardLayout({
                   display={'flex'}
                   alignItems={'center'}
                   justifyContent={'center'}
-                  width={'46px'}
+                  minWidth={'46px'}
                   bg='teal.500'
                   color={'white'}
                   borderRadius='md'>
@@ -306,7 +372,7 @@ export default function DashboardLayout({
                   bg='teal.500'
                   color={'white'}
                   borderRadius='md'>
-                  VIM
+                  LMS
                 </Box>
               }
               variant='ghost'
@@ -324,7 +390,7 @@ export default function DashboardLayout({
                   bg='teal.500'
                   color={'white'}
                   borderRadius='md'>
-                  VIM
+                  BHV
                 </Box>
               }
               variant='ghost'
@@ -338,11 +404,12 @@ export default function DashboardLayout({
                   display={'flex'}
                   alignItems={'center'}
                   justifyContent={'center'}
-                  width={'46px'}
+                  minWidth={'46px'}
                   bg='teal.500'
+                  paddingInline={'10px'}
                   color={'white'}
                   borderRadius='md'>
-                  VIM
+                  DataTek
                 </Box>
               }
               variant='ghost'
@@ -354,7 +421,7 @@ export default function DashboardLayout({
             <IconButton
               aria-label='notifications'
               icon={<FiBell />}
-              variant='ghost'
+              variant='outline'
               position='relative'
             />
             <HStack spacing='2'>
