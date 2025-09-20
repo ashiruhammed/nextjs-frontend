@@ -41,6 +41,7 @@ import {
   CalendarEdit,
   ExportCurve,
   Filter,
+  Flag,
   More,
   RowHorizontal,
   RowVertical,
@@ -571,21 +572,29 @@ export default function Home() {
                 <Tbody>
                   {filteredTasks.map((task) => (
                     <Tr key={task.id}>
-                      <Td fontWeight='medium'>{task.title}</Td>
-                      <Td>
+                      <Td fontSize={'14px'} fontWeight='semibold'>
+                        {task.title}
+                      </Td>
+                      <Td fontSize={'14px'}>
                         {task.startDate} - {task.endDate}
                       </Td>
-                      <Td>
-                        <AvatarGroup size='sm' max={2}>
+                      <Td fontSize={'14px'} fontWeight='semibold'>
+                        <AvatarGroup size='xs' max={2}>
                           {task.assignees.map((assignee, idx) => (
-                            <Avatar key={idx} name={assignee} size='sm' />
+                            <Avatar key={idx} name={assignee} size='xs' />
                           ))}
                         </AvatarGroup>
                       </Td>
-                      <Td>
-                        <Badge colorScheme={priorityColors[task.priority]}>
+                      <Td fontSize={'14px'}>
+                        <Box display={'flex'} alignItems={'center'} gap={2}>
+                          <Flag
+                            color={priorityColors[task.priority]}
+                            variant='Bold'
+                            size={18}
+                          />
+
                           {task.priority}
-                        </Badge>
+                        </Box>
                       </Td>
                       <Td>
                         <Menu>
