@@ -1,7 +1,5 @@
 import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
-  // Turbopack disabled - using default Webpack bundler
-};
+const nextConfig: NextConfig = {};
 
 export default nextConfig;
