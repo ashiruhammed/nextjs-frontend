@@ -9,6 +9,10 @@ import {
   HStack,
   IconButton,
   Input,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalContent,
@@ -31,7 +35,6 @@ import {
   TaskSquare,
   TickCircle,
 } from 'iconsax-reactjs';
-import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { mockUsers } from '../../src/data/mockUsers';
 import {
@@ -52,9 +55,6 @@ export const CreateTaskModal = ({
   onClose,
   onCreateTask,
 }: CreateTaskModalProps) => {
-  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
-  const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
-
   const {
     control,
     handleSubmit,
@@ -99,8 +99,6 @@ export const CreateTaskModal = ({
 
   const resetForm = () => {
     reset();
-    setShowStatusDropdown(false);
-    setShowPriorityDropdown(false);
   };
 
   const getStatusIcon = (statusType: Task['status']) => {
@@ -192,53 +190,32 @@ export const CreateTaskModal = ({
                       Status
                     </Text>
                   </HStack>
-                  <Box position='relative'>
-                    <Button
+                  <Menu>
+                    <MenuButton
+                      as={Button}
                       size='sm'
                       bgColor={getStatusColor(watchedValues.status)}
                       color='white'
                       leftIcon={getStatusIcon(watchedValues.status)}
-                      onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                       fontSize='14px'
                       fontWeight='medium'
                       borderRadius='6px'
                       px='12px'>
                       {getStatusLabel(watchedValues.status)}
-                    </Button>
-                    {showStatusDropdown && (
-                      <Box
-                        position='absolute'
-                        top='100%'
-                        right='0'
-                        mt='4px'
-                        bg='white'
-                        border='1px'
-                        borderColor='gray.200'
-                        borderRadius='8px'
-                        shadow='md'
-                        zIndex='10'
-                        minW='140px'>
-                        {(['todo', 'inProgress', 'complete'] as const).map(
-                          (statusOption) => (
-                            <HStack
-                              key={statusOption}
-                              p='8px 12px'
-                              cursor='pointer'
-                              _hover={{ bg: 'gray.50' }}
-                              onClick={() => {
-                                setValue('status', statusOption);
-                                setShowStatusDropdown(false);
-                              }}>
-                              {getStatusIcon(statusOption)}
-                              <Text fontSize='14px'>
-                                {getStatusLabel(statusOption)}
-                              </Text>
-                            </HStack>
-                          )
-                        )}
-                      </Box>
-                    )}
-                  </Box>
+                    </MenuButton>
+                    <MenuList minW='140px'>
+                      {(['todo', 'inProgress', 'complete'] as const).map(
+                        (statusOption) => (
+                          <MenuItem
+                            key={statusOption}
+                            onClick={() => setValue('status', statusOption)}
+                            icon={getStatusIcon(statusOption)}>
+                            {getStatusLabel(statusOption)}
+                          </MenuItem>
+                        )
+                      )}
+                    </MenuList>
+                  </Menu>
                 </HStack>
 
                 <HStack justify='space-between' align='center'>
@@ -354,47 +331,28 @@ export const CreateTaskModal = ({
                       Priority
                     </Text>
                   </HStack>
-                  <Box position='relative'>
-                    <Button
+                  <Menu>
+                    <MenuButton
+                      as={Button}
                       size='sm'
                       variant='outline'
-                      onClick={() =>
-                        setShowPriorityDropdown(!showPriorityDropdown)
-                      }
                       fontSize='14px'>
                       {watchedValues.priority}
-                    </Button>
-                    {showPriorityDropdown && (
-                      <Box
-                        position='absolute'
-                        top='100%'
-                        right='0'
-                        mt='4px'
-                        bg='white'
-                        border='1px'
-                        borderColor='gray.200'
-                        borderRadius='8px'
-                        shadow='md'
-                        zIndex='10'
-                        minW='120px'>
-                        {(
-                          ['Low', 'Medium', 'Important', 'Urgent'] as const
-                        ).map((priorityOption) => (
-                          <Box
+                    </MenuButton>
+                    <MenuList minW='120px'>
+                      {(['Low', 'Medium', 'Important', 'Urgent'] as const).map(
+                        (priorityOption) => (
+                          <MenuItem
                             key={priorityOption}
-                            p='8px 12px'
-                            cursor='pointer'
-                            _hover={{ bg: 'gray.50' }}
-                            onClick={() => {
-                              setValue('priority', priorityOption);
-                              setShowPriorityDropdown(false);
-                            }}>
-                            <Text fontSize='14px'>{priorityOption}</Text>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
-                  </Box>
+                            onClick={() =>
+                              setValue('priority', priorityOption)
+                            }>
+                            {priorityOption}
+                          </MenuItem>
+                        )
+                      )}
+                    </MenuList>
+                  </Menu>
                 </HStack>
 
                 <VStack align='stretch' spacing='8px'>
