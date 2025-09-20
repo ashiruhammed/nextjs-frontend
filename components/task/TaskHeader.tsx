@@ -1,11 +1,5 @@
 import { Button, Flex, Heading, HStack, IconButton } from '@chakra-ui/react';
-import {
-  AddCircle,
-  CalendarEdit,
-  ExportCurve,
-  Filter,
-  TickSquare,
-} from 'iconsax-reactjs';
+import { AddCircle, Calendar, ExportCurve, Sort } from 'iconsax-reactjs';
 
 interface TaskHeaderProps {
   onAddTask: () => void;
@@ -18,23 +12,23 @@ export const TaskHeader = ({ onAddTask }: TaskHeaderProps) => {
         Afdeling Kwaliteit
       </Heading>
       <HStack spacing='3'>
-        <IconButton
+        {/* <IconButton
           aria-label='Select all'
           icon={<TickSquare size='20' />}
           variant={'outline'}
           size='sm'
           bgColor={'#F7F7F7'}
-        />
+        /> */}
         <IconButton
           aria-label='Filter'
-          icon={<Filter size='20' />}
+          icon={<Sort size='20' />}
           variant='outline'
           bgColor={'#F7F7F7'}
           size='sm'
         />
         <IconButton
           aria-label='Calendar'
-          icon={<CalendarEdit size='20' />}
+          icon={<Calendar size='20' />}
           variant='outline'
           bgColor={'#F7F7F7'}
           size='sm'
