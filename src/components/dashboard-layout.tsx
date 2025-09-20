@@ -1,6 +1,12 @@
 'use client';
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Avatar,
+  Badge,
   Box,
   Button,
   Collapse,
@@ -18,24 +24,20 @@ import {
   useColorModeValue,
   useDisclosure,
   VStack,
-  Badge,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
 } from '@chakra-ui/react';
+import { ArrowDown, ArrowDown2 } from 'iconsax-reactjs';
 import React, { useState } from 'react';
 import {
-  FiMenu,
-  FiSearch,
   FiBell,
-  FiChevronDown,
   FiChevronLeft,
   FiChevronRight,
+  FiMenu,
+  FiSearch,
 } from 'react-icons/fi';
+import BcxIcon from '../../components/icons/bcx';
 import CallIcon from '../../components/icons/call';
 import CategoryIcon from '../../components/icons/category';
+import ERedIcon from '../../components/icons/ered';
 import Folder2Icon from '../../components/icons/folder-2';
 import LogoIcon from '../../components/icons/logo';
 import MenuBoardIcon from '../../components/icons/menu-board';
@@ -43,13 +45,11 @@ import MessageEditIcon from '../../components/icons/message-edit';
 import NewsPaperIcon from '../../components/icons/newspaper';
 import NoteIcon from '../../components/icons/note';
 import NotificationBingIcon from '../../components/icons/notification-bing';
+import PentagonIcon from '../../components/icons/pentagon';
 import PeopleIcon from '../../components/icons/people';
+import SettingsIcon from '../../components/icons/settings';
 import StickyNoteIcon from '../../components/icons/stickynote';
 import TaskSquareIcon from '../../components/icons/tasksquare';
-import PentagonIcon from '../../components/icons/pentagon';
-import SettingsIcon from '../../components/icons/settings';
-import BcxIcon from '../../components/icons/bcx';
-import ERedIcon from '../../components/icons/ered';
 
 type NavSection = {
   title?: string;
@@ -428,19 +428,24 @@ export default function DashboardLayout({
               aria-label='notifications'
               icon={<FiBell />}
               variant='outline'
+              borderRadius={'full'}
               position='relative'
             />
-            <HStack spacing='2'>
+            <HStack
+              spacing='2'
+              bgColor={'lightGrey.50'}
+              borderRadius={'full'}
+              p={1}>
               <Avatar size='sm' name='Paul' />
               <Text
                 fontSize='sm'
-                fontWeight='medium'
+                fontWeight='semibold'
                 display={{ base: 'none', md: 'block' }}>
                 Hi Paul
               </Text>
               <IconButton
                 aria-label='user menu'
-                icon={<FiChevronDown />}
+                icon={<ArrowDown2 variant='Bold' color='#6C7278' />}
                 variant='ghost'
                 size='sm'
               />

@@ -1,6 +1,10 @@
 'use client';
 
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
   Box,
   useColorModeValue,
   useDisclosure,
@@ -100,8 +104,28 @@ export default function Home() {
   };
 
   return (
-    <Box bg={bg} minH='100vh' p='6' bgColor={'white'} borderRadius={8}>
-      <VStack spacing='10px' align='stretch'>
+    <Box
+      bg={bg}
+      minH='100vh'
+      p={{ base: '3', md: '6' }}
+      bgColor={'white'}
+      borderRadius={8}>
+      <VStack spacing={{ base: '6', md: '10px' }} align='stretch'>
+        <Alert
+          status='info'
+          borderRadius='md'
+          display={{ base: 'flex', lg: 'none' }}>
+          <AlertIcon />
+          <Box>
+            <AlertTitle>Desktop Optimized!</AlertTitle>
+            <AlertDescription>
+              This task management app is optimized for desktop use. For the
+              best experience with drag-and-drop and detailed views, please use
+              a desktop or tablet.
+            </AlertDescription>
+          </Box>
+        </Alert>
+
         <TaskHeader onAddTask={onOpen} />
         <SearchBar
           searchTerm={searchTerm}
@@ -110,8 +134,22 @@ export default function Home() {
           setViewMode={setViewMode}
         />
         {viewMode === 'kanban' ? (
-          <KanbanView columns={columns} handleDragEnd={handleDragEnd} />
-        ) : (
+          <Box
+            display={{ base: 'none', lg: 'block' }}
+            sx={{
+              '& + *': {
+                display: { base: 'block', lg: 'none' },
+              },
+            }}>
+            <KanbanView columns={columns} handleDragEnd={handleDragEnd} />
+          </Box>
+        ) : null}
+
+        <Box
+          display={{
+            base: 'block',
+            lg: viewMode === 'kanban' ? 'none' : 'block',
+          }}>
           <ListView
             filteredTasks={filteredTasks}
             selectedStatusFilter={selectedStatusFilter}
@@ -119,7 +157,7 @@ export default function Home() {
             columns={columns}
             tasks={tasks}
           />
-        )}
+        </Box>
       </VStack>
       <CreateTaskModal
         isOpen={isOpen}
