@@ -112,7 +112,6 @@ export const DatePicker = ({
       <PopoverContent w='350px'>
         <PopoverBody p='4'>
           <VStack spacing='4' align='stretch'>
-            {/* Quick date options */}
             <VStack spacing='2' align='stretch'>
               {quickOptions.map((option, index) => (
                 <HStack
@@ -133,9 +132,7 @@ export const DatePicker = ({
 
             <Box h='1px' bg='gray.200' />
 
-            {/* Calendar */}
             <VStack spacing='3' align='stretch'>
-              {/* Calendar header */}
               <HStack justify='space-between' align='center'>
                 <IconButton
                   aria-label='Previous month'
@@ -159,7 +156,6 @@ export const DatePicker = ({
                 />
               </HStack>
 
-              {/* Weekday headers */}
               <Grid templateColumns='repeat(7, 1fr)' gap='1'>
                 {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(
                   (day) => (
@@ -176,7 +172,6 @@ export const DatePicker = ({
                 )}
               </Grid>
 
-              {/* Calendar days */}
               <Grid templateColumns='repeat(7, 1fr)' gap='1'>
                 {days.map((day, index) => (
                   <Box
