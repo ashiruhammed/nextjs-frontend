@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   Button,
+  Collapse,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -25,7 +26,14 @@ import {
   AccordionIcon,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { FiMenu, FiSearch, FiBell, FiChevronDown } from 'react-icons/fi';
+import {
+  FiMenu,
+  FiSearch,
+  FiBell,
+  FiChevronDown,
+  FiChevronLeft,
+  FiChevronRight,
+} from 'react-icons/fi';
 import CallIcon from '../../components/icons/call';
 import CategoryIcon from '../../components/icons/category';
 import Folder2Icon from '../../components/icons/folder-2';
@@ -129,12 +137,14 @@ function SimpleNavItem({
       _hover={{
         bg: useColorModeValue('gray.50', 'gray.700'),
       }}
-      leftIcon={!collapsed && React.isValidElement(icon) ? icon : undefined}
+      leftIcon={React.isValidElement(icon) ? icon : undefined}
       px={collapsed ? '2' : '4'}
       py='3'
       w='full'
       h='auto'>
-      {collapsed ? icon : title}
+      <Collapse in={!collapsed} animateOpacity>
+        <Text>{title}</Text>
+      </Collapse>
     </Button>
   );
 }
@@ -158,11 +168,16 @@ export default function DashboardLayout({
         borderRight='1px'
         borderColor={borderColor}
         h='100%'
-        overflow='auto'>
+        overflow='auto'
+        transition='width 0.2s ease-in-out'>
         <HStack justify='space-between' mb='8'>
-          <LogoIcon />
+          <Collapse in={!collapsed} animateOpacity>
+            <LogoIcon />
+          </Collapse>
+          {collapsed && <LogoIcon />}
           <IconButton
             aria-label={collapsed ? 'expand' : 'collapse'}
+            icon={collapsed ? <FiChevronRight /> : <FiChevronLeft />}
             size='sm'
             variant='ghost'
             onClick={() => setCollapsed((v) => !v)}
@@ -176,18 +191,10 @@ export default function DashboardLayout({
               return (
                 <Accordion key={idx} allowToggle>
                   <AccordionItem border='none'>
-                    <AccordionButton
-                      p='3'
-                      borderRadius='md'
-                      _hover={{
-                        bg: 'gray.50',
-                      }}
-                      _expanded={{
-                        bg: 'gray.100',
-                      }}>
+                    <AccordionButton p='3' borderRadius='md'>
                       <HStack flex='1' spacing='3'>
                         {section.icon}
-                        {!collapsed && (
+                        <Collapse in={!collapsed} animateOpacity>
                           <Text
                             fontSize='sm'
                             color='#464B50'
@@ -195,11 +202,13 @@ export default function DashboardLayout({
                             textAlign='left'>
                             {section.title}
                           </Text>
-                        )}
+                        </Collapse>
                       </HStack>
-                      {!collapsed && <AccordionIcon />}
+                      <Collapse in={!collapsed} animateOpacity>
+                        <AccordionIcon />
+                      </Collapse>
                     </AccordionButton>
-                    {!collapsed && (
+                    <Collapse in={!collapsed} animateOpacity>
                       <AccordionPanel pb='2' pt='1' px='0'>
                         <VStack spacing='1' align='stretch'>
                           {section.items.map((item) => (
@@ -207,7 +216,7 @@ export default function DashboardLayout({
                           ))}
                         </VStack>
                       </AccordionPanel>
-                    )}
+                    </Collapse>
                   </AccordionItem>
                 </Accordion>
               );
