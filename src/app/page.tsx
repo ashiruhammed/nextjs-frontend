@@ -15,10 +15,10 @@ import { KanbanView } from '../../components/task/KanbanView';
 import { ListView } from '../../components/task/ListView';
 import { CreateTaskModal } from '../../components/task/CreateTaskModal';
 import { Task, Column } from '../types/task';
-import { initialTasks } from '../data/mockData';
+import { useTaskPersistence } from '../hooks/useTaskPersistence';
 
 export default function Home() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const { tasks, addTask, saveTasks } = useTaskPersistence();
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<
@@ -87,19 +87,14 @@ export default function Home() {
     else if (overId === 'complete' || overId.startsWith('complete-'))
       newStatus = 'complete';
 
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === activeId ? { ...task, status: newStatus } : task
-      )
+    const updatedTasks = tasks.map((task) =>
+      task.id === activeId ? { ...task, status: newStatus } : task
     );
+    saveTasks(updatedTasks);
   };
 
   const handleCreateTask = (newTask: Omit<Task, 'id'>) => {
-    const taskWithId: Task = {
-      ...newTask,
-      id: (tasks.length + 1).toString(),
-    };
-    setTasks((prevTasks) => [...prevTasks, taskWithId]);
+    addTask(newTask);
   };
 
   return (
