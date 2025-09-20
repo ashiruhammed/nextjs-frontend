@@ -13,9 +13,10 @@ import { TaskHeader } from '../../components/task/TaskHeader';
 import { SearchBar } from '../../components/task/SearchBar';
 import { KanbanView } from '../../components/task/KanbanView';
 import { ListView } from '../../components/task/ListView';
-import { CreateTaskModal } from '../../components/task/CreateTaskModal';
+
 import { Task, Column } from '../types/task';
 import { useTaskPersistence } from '../hooks/useTaskPersistence';
+import { CreateTaskModal } from '../../components/task/CreateTaskModal';
 
 export default function Home() {
   const { tasks, addTask, saveTasks } = useTaskPersistence();

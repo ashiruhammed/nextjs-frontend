@@ -27,11 +27,12 @@ import {
 } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Calendar1,
+  Calendar,
   CloseCircle,
   Flag,
-  People,
+  ProfileCircle,
   Status,
+  Stickynote,
   TaskSquare,
   TickCircle,
 } from 'iconsax-reactjs';
@@ -101,14 +102,32 @@ export const CreateTaskModal = ({
     reset();
   };
 
-  const getStatusIcon = (statusType: Task['status']) => {
+  const getStatusIcon = (statusType: Task['status'], triggerIcon = false) => {
     switch (statusType) {
       case 'todo':
-        return <TaskSquare variant='Bold' size={16} color='#CFB7E8' />;
+        return (
+          <TaskSquare
+            variant='Bold'
+            size={16}
+            color={triggerIcon ? '#fff' : '#CFB7E8'}
+          />
+        );
       case 'inProgress':
-        return <Status variant='Bold' size={16} color='#F6BE38' />;
+        return (
+          <Status
+            variant='Bold'
+            size={16}
+            color={triggerIcon ? '#fff' : '#F6BE38'}
+          />
+        );
       case 'complete':
-        return <TickCircle variant='Bold' size={16} color='#75C5C1' />;
+        return (
+          <TickCircle
+            variant='Bold'
+            size={16}
+            color={triggerIcon ? '#fff' : '#75C5C1'}
+          />
+        );
     }
   };
 
@@ -183,8 +202,8 @@ export const CreateTaskModal = ({
 
                 <HStack justify='space-between' align='center'>
                   <HStack spacing='12px'>
-                    <Box color='#718096'>
-                      <TaskSquare size='20' />
+                    <Box color='#464B50'>
+                      <Status size='20' />
                     </Box>
                     <Text fontSize='16px' color='#1A202C' fontWeight='medium'>
                       Status
@@ -196,7 +215,7 @@ export const CreateTaskModal = ({
                       size='sm'
                       bgColor={getStatusColor(watchedValues.status)}
                       color='white'
-                      leftIcon={getStatusIcon(watchedValues.status)}
+                      leftIcon={getStatusIcon(watchedValues.status, true)}
                       fontSize='14px'
                       fontWeight='medium'
                       borderRadius='6px'
@@ -207,6 +226,7 @@ export const CreateTaskModal = ({
                       {(['todo', 'inProgress', 'complete'] as const).map(
                         (statusOption) => (
                           <MenuItem
+                            fontSize={14}
                             key={statusOption}
                             onClick={() => setValue('status', statusOption)}
                             icon={getStatusIcon(statusOption)}>
@@ -220,46 +240,53 @@ export const CreateTaskModal = ({
 
                 <HStack justify='space-between' align='center'>
                   <HStack spacing='12px'>
-                    <Box color='#718096'>
-                      <Calendar1 size='20' />
+                    <Box color='#464B50'>
+                      <Calendar size='20' />
                     </Box>
                     <Text fontSize='16px' color='#1A202C' fontWeight='medium'>
                       Dates
                     </Text>
                   </HStack>
-                  <HStack spacing='2'>
-                    <Controller
-                      name='startDate'
-                      control={control}
-                      render={({ field }) => (
-                        <DatePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder='Start Date'
-                        />
-                      )}
-                    />
-                    <Text fontSize='14px' color='#A0AEC0'>
-                      -
-                    </Text>
-                    <Controller
-                      name='endDate'
-                      control={control}
-                      render={({ field }) => (
-                        <DatePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder='End Date'
-                        />
-                      )}
-                    />
-                  </HStack>
+                  <VStack>
+                    <HStack spacing='2'>
+                      <Controller
+                        name='startDate'
+                        control={control}
+                        render={({ field }) => (
+                          <DatePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder='Start Date'
+                          />
+                        )}
+                      />
+                      <Text fontSize='14px' color='#A0AEC0'>
+                        -
+                      </Text>
+                      <Controller
+                        name='endDate'
+                        control={control}
+                        render={({ field }) => (
+                          <DatePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder='End Date'
+                          />
+                        )}
+                      />
+                    </HStack>
+                    {(errors.startDate || errors.endDate) && (
+                      <Text fontSize='12px' color='red.500' mt='1'>
+                        {errors.startDate?.message || errors.endDate?.message}
+                      </Text>
+                    )}
+                  </VStack>
                 </HStack>
 
                 <HStack justify='space-between' align='center'>
                   <HStack spacing='12px'>
-                    <Box color='#718096'>
-                      <People size='20' />
+                    <Box color='#464B50'>
+                      <ProfileCircle size='20' />
                     </Box>
                     <Text fontSize='16px' color='#1A202C' fontWeight='medium'>
                       Assignees
@@ -324,7 +351,7 @@ export const CreateTaskModal = ({
 
                 <HStack justify='space-between' align='center'>
                   <HStack spacing='12px'>
-                    <Box color='#718096'>
+                    <Box color='#464B50'>
                       <Flag size='20' />
                     </Box>
                     <Text fontSize='16px' color='#1A202C' fontWeight='medium'>
@@ -339,14 +366,31 @@ export const CreateTaskModal = ({
                       fontSize='14px'>
                       {watchedValues.priority}
                     </MenuButton>
-                    <MenuList minW='120px'>
-                      {(['Low', 'Medium', 'Important', 'Urgent'] as const).map(
+                    <MenuList minW='190px'>
+                      {(['Low', 'Normal', 'Important', 'Urgent'] as const).map(
                         (priorityOption) => (
                           <MenuItem
+                            display={'flex'}
+                            alignItems={'center'}
+                            gap={2}
+                            fontSize={14}
                             key={priorityOption}
                             onClick={() =>
                               setValue('priority', priorityOption)
                             }>
+                            <Flag
+                              color={
+                                priorityOption === 'Low'
+                                  ? '#BAC1CC'
+                                  : priorityOption === 'Normal'
+                                  ? '#75C5C1'
+                                  : priorityOption === 'Important'
+                                  ? '#F6BE38'
+                                  : '#FF515D'
+                              }
+                              variant='Bold'
+                              size={16}
+                            />
                             {priorityOption}
                           </MenuItem>
                         )
@@ -357,8 +401,8 @@ export const CreateTaskModal = ({
 
                 <VStack align='stretch' spacing='8px'>
                   <HStack spacing='12px'>
-                    <Box color='#718096'>
-                      <TaskSquare size='20' />
+                    <Box color='#464B50'>
+                      <Stickynote size='20' />
                     </Box>
                     <Text fontSize='16px' color='#1A202C' fontWeight='medium'>
                       Description

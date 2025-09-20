@@ -9,7 +9,7 @@ export const createTaskSchema = z.object({
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
   assignees: z.array(z.string()),
-  priority: z.enum(['Low', 'Medium', 'Important', 'Urgent']),
+  priority: z.enum(['Low', 'Normal', 'Important', 'Urgent']),
   description: z.string().optional(),
 });
 

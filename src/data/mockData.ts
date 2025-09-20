@@ -7,7 +7,7 @@ export const initialTasks: Task[] = [
     startDate: '04/06/2024',
     endDate: '16/06/2014',
     assignees: ['John', 'Sarah', 'Mike'],
-    priority: 'Medium',
+    priority: 'Normal',
     status: 'todo',
   },
   {
@@ -58,8 +58,8 @@ export const initialTasks: Task[] = [
 ];
 
 export const priorityColors = {
-  Low: 'gray',
-  Medium: 'teal',
-  Important: 'yellow',
-  Urgent: 'red',
+  Low: '#BAC1CC',
+  Normal: '#75C5C1',
+  Important: '#F6BE38',
+  Urgent: '#FF515D',
 };

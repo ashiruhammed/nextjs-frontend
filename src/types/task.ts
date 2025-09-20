@@ -4,7 +4,7 @@ export interface Task {
   startDate: string;
   endDate: string;
   assignees: string[];
-  priority: 'Low' | 'Medium' | 'Important' | 'Urgent';
+  priority: 'Low' | 'Normal' | 'Important' | 'Urgent';
   status: 'todo' | 'inProgress' | 'complete';
   description?: string;
 }
