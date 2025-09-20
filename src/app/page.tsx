@@ -17,7 +17,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Select,
   Table,
   Tbody,
   Td,
@@ -35,20 +34,20 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { view } from 'framer-motion/client';
 import {
   Add,
   AddCircle,
   Calendar1,
   CalendarEdit,
-  Element4,
   ExportCurve,
   Filter,
   More,
   RowHorizontal,
   RowVertical,
   SearchNormal1,
-  TableDocument,
+  Status,
+  TaskSquare,
+  TickCircle,
   TickSquare,
 } from 'iconsax-reactjs';
 import { useMemo, useState } from 'react';
@@ -143,7 +142,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<
     'all' | 'todo' | 'inProgress' | 'complete'
-  >('all');
+  >('todo');
 
   const bg = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
@@ -426,45 +425,41 @@ export default function Home() {
             </Flex>
           </DndContext>
         ) : (
-          <Box
-            bg='white'
-            borderRadius='md'
-            overflow='hidden'
-            border='1px'
-            borderColor='gray.200'>
+          <Box bg='white'>
             <Flex
               justify='space-between'
               align='center'
-              p='4'
-              borderBottom='1px'
-              borderColor='gray.200'
-              bg='gray.50'>
+              // p='4'
+              padding={'10px'}
+              bg='lightGrey.50'>
               <HStack spacing='6'>
                 <Button
-                  variant={selectedStatusFilter === 'all' ? 'solid' : 'ghost'}
-                  colorScheme='purple'
-                  size='sm'
-                  leftIcon={
-                    <Box w='8px' h='8px' borderRadius='full' bg='purple.400' />
-                  }
-                  onClick={() => setSelectedStatusFilter('all')}>
-                  All
-                  <Badge ml='2' variant='subtle' colorScheme='purple'>
-                    {tasks.length}
-                  </Badge>
-                </Button>
-
-                <Button
                   variant={selectedStatusFilter === 'todo' ? 'solid' : 'ghost'}
-                  colorScheme='purple'
                   size='sm'
+                  padding={'4px'}
+                  paddingLeft={'12px'}
+                  color={selectedStatusFilter === 'todo' ? 'white' : 'brown.50'}
+                  bgColor={
+                    selectedStatusFilter === 'todo' ? '#CFB7E8' : 'white'
+                  }
                   leftIcon={
-                    <Box w='8px' h='8px' borderRadius='full' bg='purple.400' />
+                    <TaskSquare
+                      variant='Bold'
+                      color={
+                        selectedStatusFilter === 'todo' ? 'white' : '#CFB7E8'
+                      }
+                    />
                   }
                   onClick={() => setSelectedStatusFilter('todo')}>
-                  To Do
-                  <Badge ml='2' variant='subtle' colorScheme='purple'>
-                    ({columns.find((c) => c.id === 'todo')?.tasks.length || 0})
+                  Todo
+                  <Badge
+                    ml='12'
+                    borderRadius={4}
+                    variant='subtle'
+                    bgColor={'#F9F3FF'}
+                    paddingBlock={'4px'}
+                    paddingInline={'10px'}>
+                    {tasks.length}
                   </Badge>
                 </Button>
 
@@ -472,33 +467,71 @@ export default function Home() {
                   variant={
                     selectedStatusFilter === 'inProgress' ? 'solid' : 'ghost'
                   }
-                  colorScheme='orange'
                   size='sm'
+                  padding={'4px'}
+                  paddingLeft={'12px'}
                   leftIcon={
-                    <Box w='8px' h='8px' borderRadius='full' bg='orange.400' />
+                    <Status
+                      variant='Bold'
+                      color={
+                        selectedStatusFilter === 'inProgress'
+                          ? 'white'
+                          : '#F6BE38'
+                      }
+                    />
+                  }
+                  color={
+                    selectedStatusFilter === 'inProgress' ? 'white' : 'brown.50'
+                  }
+                  bgColor={
+                    selectedStatusFilter === 'inProgress'
+                      ? 'priority.important'
+                      : 'white'
                   }
                   onClick={() => setSelectedStatusFilter('inProgress')}>
                   In Progress
-                  <Badge ml='2' variant='subtle' colorScheme='orange'>
-                    (
-                    {columns.find((c) => c.id === 'inProgress')?.tasks.length ||
-                      0}
-                    )
+                  <Badge
+                    ml='12'
+                    paddingBlock={'4px'}
+                    paddingInline={'10px'}
+                    bgColor={'#FBF4E4'}
+                    borderRadius={4}
+                    variant='subtle'>
+                    ({columns.find((c) => c.id === 'todo')?.tasks.length || 0})
                   </Badge>
                 </Button>
-
                 <Button
                   variant={
                     selectedStatusFilter === 'complete' ? 'solid' : 'ghost'
                   }
-                  colorScheme='teal'
                   size='sm'
+                  padding={'4px'}
+                  paddingLeft={'12px'}
                   leftIcon={
-                    <Box w='8px' h='8px' borderRadius='full' bg='teal.400' />
+                    <TickCircle
+                      variant='Bold'
+                      color={
+                        selectedStatusFilter === 'complete'
+                          ? 'white'
+                          : '#75C5C1'
+                      }
+                    />
+                  }
+                  color={
+                    selectedStatusFilter === 'complete' ? 'white' : 'brown.50'
+                  }
+                  bgColor={
+                    selectedStatusFilter === 'complete' ? '#75C5C1' : 'white'
                   }
                   onClick={() => setSelectedStatusFilter('complete')}>
-                  Complete
-                  <Badge ml='2' variant='subtle' colorScheme='teal'>
+                  In Progress
+                  <Badge
+                    ml='12'
+                    paddingBlock={'4px'}
+                    paddingInline={'10px'}
+                    bgColor={'#E9F5F7'}
+                    borderRadius={4}
+                    variant='subtle'>
                     (
                     {columns.find((c) => c.id === 'complete')?.tasks.length ||
                       0}
@@ -506,68 +539,79 @@ export default function Home() {
                   </Badge>
                 </Button>
               </HStack>
-
-              <Select size='sm' maxW='120px' defaultValue='10'>
-                <option value='10'>10</option>
-                <option value='25'>25</option>
-                <option value='50'>50</option>
-              </Select>
             </Flex>
-
-            <Table variant='simple'>
-              <Thead>
-                <Tr>
-                  <Th>Name</Th>
-                  <Th>Date</Th>
-                  <Th>Assignee</Th>
-                  <Th>Priority</Th>
-                  <Th></Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {filteredTasks.map((task) => (
-                  <Tr key={task.id}>
-                    <Td fontWeight='medium'>{task.title}</Td>
-                    <Td>
-                      {task.startDate} - {task.endDate}
-                    </Td>
-                    <Td>
-                      <AvatarGroup size='sm' max={2}>
-                        {task.assignees.map((assignee, idx) => (
-                          <Avatar key={idx} name={assignee} size='sm' />
-                        ))}
-                      </AvatarGroup>
-                    </Td>
-                    <Td>
-                      <Badge colorScheme={priorityColors[task.priority]}>
-                        {task.priority}
-                      </Badge>
-                    </Td>
-                    <Td>
-                      <Menu>
-                        <MenuButton
-                          as={IconButton}
-                          icon={<More size='16' />}
-                          variant='ghost'
-                          size='sm'
-                        />
-                        <MenuList>
-                          <MenuItem>Edit</MenuItem>
-                          <MenuItem>Delete</MenuItem>
-                          <MenuItem>Duplicate</MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </Td>
+            <Box
+              borderRadius='md'
+              overflow='hidden'
+              border='1px'
+              marginTop={'10px'}
+              borderColor='gray.200'>
+              <Table variant='simple'>
+                <Thead bgColor={'lightGrey.50'}>
+                  <Tr>
+                    {['Name', 'Date', 'Assignee', 'Priority', ''].map(
+                      (header) => (
+                        <Th
+                          key={header}
+                          color={'#1A1C1E'}
+                          fontSize={14}
+                          borderLeft={
+                            header !== 'Name' && header !== '' ? '2px' : '0'
+                          }
+                          fontWeight={'bold'}
+                          sx={{
+                            borderColor: '#E2E8F0',
+                          }}>
+                          {header}
+                        </Th>
+                      )
+                    )}
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
+                </Thead>
+                <Tbody>
+                  {filteredTasks.map((task) => (
+                    <Tr key={task.id}>
+                      <Td fontWeight='medium'>{task.title}</Td>
+                      <Td>
+                        {task.startDate} - {task.endDate}
+                      </Td>
+                      <Td>
+                        <AvatarGroup size='sm' max={2}>
+                          {task.assignees.map((assignee, idx) => (
+                            <Avatar key={idx} name={assignee} size='sm' />
+                          ))}
+                        </AvatarGroup>
+                      </Td>
+                      <Td>
+                        <Badge colorScheme={priorityColors[task.priority]}>
+                          {task.priority}
+                        </Badge>
+                      </Td>
+                      <Td>
+                        <Menu>
+                          <MenuButton
+                            as={IconButton}
+                            icon={<More size='16' />}
+                            variant='ghost'
+                            size='sm'
+                          />
+                          <MenuList>
+                            <MenuItem>Edit</MenuItem>
+                            <MenuItem>Delete</MenuItem>
+                            <MenuItem>Duplicate</MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
 
             <Flex
               justify='space-between'
               align='center'
               p='4'
-              borderTop='1px'
               borderColor='gray.200'>
               <Text fontSize='sm' color='gray.600'>
                 Rows Per page: 10

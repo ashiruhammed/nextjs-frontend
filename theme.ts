@@ -171,6 +171,10 @@ export const theme = extendTheme({
       active: '#EDF2F7',
     },
 
+    brown: {
+      50: '#464B50',
+    },
+
     priority: {
       low: '#64748B',
       medium: '#14B8A6',

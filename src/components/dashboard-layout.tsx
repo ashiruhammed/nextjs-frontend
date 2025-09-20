@@ -261,7 +261,7 @@ export default function DashboardLayout({
               onClick={onOpen}
             />
 
-            <InputGroup maxW='300px' display={{ base: 'none', md: 'flex' }}>
+            <InputGroup maxW='300px' display={{ base: 'none', lg: 'flex' }}>
               <InputLeftElement pointerEvents='none'>
                 <FiSearch color='gray.400' />
               </InputLeftElement>
@@ -279,7 +279,7 @@ export default function DashboardLayout({
             </InputGroup>
           </HStack>
 
-          <HStack spacing='2' mx='4' display={{ base: 'none', md: 'flex' }}>
+          <HStack spacing='2' mx='4' display={{ base: 'none', xl: 'flex' }}>
             <IconButton
               aria-label='Service 1'
               icon={<PentagonIcon />}
@@ -321,7 +321,7 @@ export default function DashboardLayout({
             />
           </HStack>
           <HStack
-            display={{ base: 'none', md: 'flex' }}
+            display={{ base: 'none', lg: 'flex' }}
             height={'46px'}
             backgroundColor={'#F7F7F7'}
             borderWidth={'1px'}
