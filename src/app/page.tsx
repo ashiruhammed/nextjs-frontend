@@ -121,7 +121,7 @@ export default function Home() {
             <AlertDescription>
               This task management app is optimized for desktop use. For the
               best experience with drag-and-drop and detailed views, please use
-              a desktop or tablet.
+              a desktop or tablet
             </AlertDescription>
           </Box>
         </Alert>
